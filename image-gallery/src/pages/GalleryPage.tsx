@@ -1,9 +1,10 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ImageCard from "../components/ImageCard";
 import fetchImages from "../hooks/useFetchImages";
+import { ImageData } from "../hooks/useFetchImages";
 
-const GalleryPage = () => {
-  const [images, setImages] = useState<string[]>([]);
+const GalleryPage: React.FC = () => {
+  const [images, setImages] = useState<ImageData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -11,7 +12,7 @@ const GalleryPage = () => {
       setLoading(true);
       try {
         const data = await fetchImages();
-        setImages(data);
+        setImages(data); // Salvăm obiectele de tip ImagePreview
       } catch (error) {
         console.error("Error fetching images", error);
       } finally {
@@ -21,9 +22,15 @@ const GalleryPage = () => {
     fetchData();
   }, []);
 
-  return images.map((image: string) => (
-    <ImageCard key={image} imageURL={image} />
-  ));
+  return loading ? (
+    <p>Loading...</p> // Afișezi un mesaj de încărcare
+  ) : (
+    <div className="grid grid-cols-5 gap-4 p-4 items-stretch bg-gray-100">
+      {images.map((image) => (
+        <ImageCard key={image.id} {...image} />
+      ))}
+    </div>
+  );
 };
 
 export default GalleryPage;
