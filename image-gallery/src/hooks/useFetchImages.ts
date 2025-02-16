@@ -1,4 +1,6 @@
-import { UnsplashImage } from "../types/unsplash";
+import { UnsplashImage } from "../types/UnsplashImage";
+import fetchStatistics from "./useFetchStatistics";
+import fetchTags from "./useFetchTags";
 
 const API_URL = "https://api.unsplash.com/photos";
 const API_KEY = "g5mgouoMBvFFi2_J5xnUvuL9oUmYtaOw3XHpS-XIVsY";
@@ -9,45 +11,59 @@ export type ImageData = {
   url: string;
   tags: string[];
   name: string;
+  likes?: number;
+  downloads: number;
+  views: number;
 };
 
-const fetchImages = async (page: number = 1, perPage: number = 15): Promise<ImageData[]> => {
+const fetchImages = async (page: number, perPage: number): Promise<ImageData[]> => {
   try {
     const response = await fetch(
       `${API_URL}?client_id=${API_KEY}&page=${page}&per_page=${perPage}`
     );
     const data: UnsplashImage[] = await response.json();
 
-    const keywordTags = [
-      "nature", "forest", "sky", "people", "city", "car", "man", "woman", "child",
-      "dog", "cat", "food", "coffee", "music", "dance", "sport", "travel", "mountain",
-      "beach", "sea", "ocean", "river", "lake", "flower", "tree", "house", "building",
-      "architecture", "art", "book", "computer", "phone", "garden", "park", "school",
-      "university", "hospital", "police", "firefighter", "doctor", "nurse", "teacher",
-      "student", "engineer", "artist", "musician", "actor", "writer", "photographer",
-      "designer", "developer", "programmer", "scientist", "astronaut", "pilot",
-      "soldier", "king", "queen", "prince", "princess", "wizard", "witch", "vampire",
-      "zombie", "ghost", "monster", "alien", "robot"
-    ];
+    const savedStats = JSON.parse(localStorage.getItem("imageStats") || "{}");
 
-    const images: ImageData[] = data.map((image) => {
-      let tags = Object.keys(image.topic_submissions).slice(0, 3); 
+    const images: ImageData[] = await Promise.all(
+      data.map(async (image) => {
+        const id = image.id;
 
-      if (tags.length === 0 && image.alt_description) {
-        const generatedTags = keywordTags.filter((keyword) =>
-          image.alt_description?.toLowerCase().includes(keyword)
-        );
-        tags = generatedTags.slice(0, 3); 
-      }
+        if (!savedStats[id]) {
+          savedStats[id] = {
+            tags: [],
+            downloads: 0,
+            views: 0,
+          };
 
-      return {
-        id: image.id,
-        description: image.alt_description ?? "No description",
-        url: image.urls.small,
-        tags: tags.length > 0 ? tags : ["uncategorized"], // Asigurăm minim un tag
-        name: image.user.name,
-      };
-    });
+          // Obține tag-urile și statistici
+          const [tags, stats] = await Promise.all([
+            fetchTags(id),
+            fetchStatistics(id),
+          ]);
+
+          // Stochează tag-urile și statistici în savedStats
+          savedStats[id].tags = tags.slice(0, 3); // Limitează la 3 tag-uri
+          savedStats[id].downloads = stats.downloads;
+          savedStats[id].views = stats.views;
+        }
+
+        // Returnează datele complete pentru imagine
+        return {
+          id,
+          description: image.alt_description ?? "No description",
+          url: image.urls.small,
+          tags: savedStats[id].tags.length > 0 ? savedStats[id].tags : ["uncategorized"], // Asigură-te că avem minim un tag
+          name: image.user.name,
+          likes: image.likes,
+          downloads: savedStats[id].downloads,
+          views: savedStats[id].views,
+        };
+      })
+    );
+
+    // Salvăm noile date în localStorage
+    localStorage.setItem("imageStats", JSON.stringify(savedStats));
 
     return images;
   } catch (error) {

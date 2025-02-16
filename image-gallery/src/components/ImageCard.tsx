@@ -3,9 +3,20 @@ type ImageCardProps = {
   url: string;
   tags: string[];
   name: string;
+  likes?: number;
+  downloads: number;
+  views: number;
 };
 
-const ImageCard = ({ description, url, tags, name }: ImageCardProps) => {
+const ImageCard = ({
+  description,
+  url,
+  tags,
+  name,
+  likes,
+  downloads,
+  views,
+}: ImageCardProps) => {
   return (
     <div className="flex flex-col items-start bg-white rounded-2xl shadow-lg w-80 h-auto overflow-hidden border-gray-300">
       <img src={url} alt={description} className="w-full"></img>
@@ -16,15 +27,15 @@ const ImageCard = ({ description, url, tags, name }: ImageCardProps) => {
         <ul className="py-2">
           <li>
             <strong>Views: </strong>
-            300
+            {views}
           </li>
           <li>
             <strong>Downloads: </strong>
-            100
+            {downloads}
           </li>
           <li>
             <strong>Likes: </strong>
-            200
+            {likes}
           </li>
         </ul>
       </div>

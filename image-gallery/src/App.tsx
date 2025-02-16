@@ -2,9 +2,9 @@ import GalleryPage from "./pages/GalleryPage";
 
 const App = () => {
   return (
-    <>
-      <GalleryPage></GalleryPage>
-    </>
+    <div className="bg-gray-100">
+      <GalleryPage />
+    </div>
   );
 };
 
