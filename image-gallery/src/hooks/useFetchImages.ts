@@ -11,7 +11,7 @@ export type ImageData = {
   url: string;
   tags: string[];
   name: string;
-  likes?: number;
+  likes: number;
   downloads: number;
   views: number;
 };
@@ -34,6 +34,7 @@ const fetchImages = async (page: number, perPage: number): Promise<ImageData[]> 
             tags: [],
             downloads: 0,
             views: 0,
+            likes: 0,
           };
 
           // Obține tag-urile și statistici
@@ -46,6 +47,7 @@ const fetchImages = async (page: number, perPage: number): Promise<ImageData[]> 
           savedStats[id].tags = tags.slice(0, 3); // Limitează la 3 tag-uri
           savedStats[id].downloads = stats.downloads;
           savedStats[id].views = stats.views;
+          savedStats[id].likes = image.likes;
         }
 
         // Returnează datele complete pentru imagine
@@ -55,7 +57,7 @@ const fetchImages = async (page: number, perPage: number): Promise<ImageData[]> 
           url: image.urls.small,
           tags: savedStats[id].tags.length > 0 ? savedStats[id].tags : ["uncategorized"], // Asigură-te că avem minim un tag
           name: image.user.name,
-          likes: image.likes,
+          likes: savedStats[id].likes,
           downloads: savedStats[id].downloads,
           views: savedStats[id].views,
         };

@@ -1,24 +1,27 @@
+import LikeButton from "./LikeButton";
+import DownloadButton from "./DownloadButton";
+
 type ImageCardProps = {
+  id: string;
   description: string;
   url: string;
   tags: string[];
   name: string;
-  likes?: number;
   downloads: number;
   views: number;
 };
 
 const ImageCard = ({
+  id,
   description,
   url,
   tags,
   name,
-  likes,
   downloads,
   views,
 }: ImageCardProps) => {
   return (
-    <div className="flex flex-col items-start bg-white rounded-2xl shadow-lg w-80 h-auto overflow-hidden border-gray-300">
+    <div className="flex flex-col justify-between items-start bg-white rounded-2xl shadow-lg w-80 h-auto overflow-hidden border-gray-300">
       <img src={url} alt={description} className="w-full"></img>
       <div className="p-6">
         <div className="font-serif text-xl font-semibold text-gray-700">
@@ -33,12 +36,9 @@ const ImageCard = ({
             <strong>Downloads: </strong>
             {downloads}
           </li>
-          <li>
-            <strong>Likes: </strong>
-            {likes}
-          </li>
         </ul>
       </div>
+      <p className="text-gray-600 italic p-6">"{description}"</p>
       <div className="flex flex-wrap p-4 gap-1">
         {tags.map((tag) => (
           <span
@@ -48,6 +48,10 @@ const ImageCard = ({
             #{tag}
           </span>
         ))}
+      </div>
+      <div className="flex w-full justify-end p-4 gap-2">
+        <LikeButton idImage={id}></LikeButton>
+        <DownloadButton idImage={id}></DownloadButton>
       </div>
     </div>
   );

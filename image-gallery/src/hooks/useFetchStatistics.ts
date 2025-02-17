@@ -17,12 +17,11 @@ const fetchStatistics = async (idImage: string): Promise<StatisticsData> => {
             downloads: data.downloads.total,
             views: data.views.total,
         };
-
         return statistics;
     } catch (error) {
         console.error("Error fetching image statistics:", error);
         // Poți returna un obiect gol sau un set de valori implicite
-        return { downloads: 0, views: 0 };
+        return { downloads: 0, views: 0};
     }
 };
 

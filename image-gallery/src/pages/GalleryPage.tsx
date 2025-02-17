@@ -56,7 +56,7 @@ const GalleryPage: React.FC = () => {
   });
 
   return (
-    <div className="flex flex-col items-center py-40">
+    <div className="flex flex-col items-center pb-40 pt-4">
       <SearchBar onSearch={setSearchTerm} />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 p-4">
         {filteredImages.map((image) => (
