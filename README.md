@@ -3,6 +3,7 @@
 🖼️ Image Gallery
 
 Image Gallery is a web application built with React & Tailwind CSS that allows users to search, explore, like, and download images from the Unsplash API.
+
 ✨ Features
 
     🔍 Dynamic search for images
